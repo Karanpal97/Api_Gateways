@@ -3,6 +3,7 @@ const express = require('express');
 const { ServerConfig } = require('./config');
 const apiRoutes = require('./routes');
 const rateLimit = require('express-rate-limit')
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const limiter = rateLimit({
@@ -13,6 +14,9 @@ const limiter = rateLimit({
 
 // Apply the rate limiting middleware to all requests
 app.use(limiter)
+app.use('/booking-service', createProxyMiddleware({ target: 'http://localhost:4000', changeOrigin: true , pathRewrite: {
+	'^/booking-service': '/', 
+ },}));
 
 
 app.use(express.json());
