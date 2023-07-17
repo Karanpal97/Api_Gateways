@@ -8,7 +8,9 @@ class UserRepository extends CrudRepository {
     }
 
     async getUserByEmail(email){
+      
         const res= await users.findOne({where:{email:email}})
+      
         return res
        }
 }

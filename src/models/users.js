@@ -2,7 +2,8 @@
 const {
   Model
 } = require('sequelize');
-const bcrypt=require("bcrypt")
+const bcrypt=require("bcrypt");
+const user_role = require('./user_role');
 module.exports = (sequelize, DataTypes) => {
   class users extends Model {
     /**
@@ -12,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsToMany(models.Role, { through: "user_role", as:"role"});
     }
   }
   users.init({
@@ -21,7 +23,8 @@ module.exports = (sequelize, DataTypes) => {
   unique:true,
 validate:{
   isEmail:true
-}},
+},
+},
     password: {
       type:DataTypes.STRING,
     allowNull:false,
