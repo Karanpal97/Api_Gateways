@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false,
 
     },
-    roleId: {
+    RoleId: {
       type:DataTypes.INTEGER,
       allowNull:false}
   }, {

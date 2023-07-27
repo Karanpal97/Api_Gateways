@@ -24,6 +24,26 @@ function validateAuthRequest(req, res, next) {
 
 async function checkAuth(req,res,next){
     try{const response= await UserService.isAuthentication(req.headers['x-access-token']);
+    if(response){
+      req.user=response
+    }
+    next();}
+    catch(error){
+        return res
+        .status(error.statusCode)
+        .json(error);
+    }
+}
+
+async function isAdmin(req,res,next){
+    try{const response= await UserService.isAdmin(req.user);
+      if(!response){
+        return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({message:"user is unauthorized to change the role"});
+      }
+
+
     next();}
     catch(error){
         return res
@@ -34,6 +54,7 @@ async function checkAuth(req,res,next){
     
 
 module.exports = {
-    validateAuthRequest,checkAuth
+    validateAuthRequest,checkAuth,
+    isAdmin
    
 }

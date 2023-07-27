@@ -10,20 +10,13 @@ const roleRepo=new RoleRepository()
 
 async function create(data) {
     try {
-        console.log("start")
-        const user = await userRepo.create(data);
-         console.log("before the table")
-        const role=await roleRepo.getRoleByName(Enums.userRole.CUSTOMER)
-        console.log(role.id)
-        console.log("after the table")
-     
-       user.addRole(role);
-   
-       return user
-  
+          const user = await userRepo.create(data);
+          const role=await roleRepo.getRoleByName(Enums.userRole.CUSTOMER)
+          user.addRole(role);
         
-    } catch(error) {
-        console.log(error.name);
+          return user
+       } catch(error) {
+     
         if(error.name == 'SequelizeValidationError' || error.name == 'SequelizeUniqueConstraintError') {
             let explanation = [];
             error.errors.forEach((err) => {
@@ -97,7 +90,33 @@ function verifyToken(token){
     return res;
 }
 
+async function addRoleToUser(data){
+    try{
+        const user= await userRepo.get(data.id);
+        const role=await roleRepo.getRoleByName(data.role)
+        user.addRole(role);
+        return user;
+    }
+    catch(error){
+        console.log(error)
+        throw new AppError('something went wrong', StatusCodes.INTERNAL_SERVER_ERROR);
+
+    }
+}
+
+async function isAdmin(id){
+    try{
+        const user= await userRepo.get(id);
+        const admin=await roleRepo.getRoleByName(Enums.userRole.ADMIN)
+        return user.hasRole(admin) ;
+    }
+    catch(error){
+        console.log(error)
+        throw new AppError('something went wrong', StatusCodes.INTERNAL_SERVER_ERROR);
+
+    }
+}
+
 module.exports = {
-    create,signIn,isAuthentication
-   
+    create,signIn,isAuthentication,addRoleToUser,isAdmin
 }
